@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -17,14 +17,17 @@ export class UsersService {
 
   async findAll() {
     // return this.usersRepository.find();
-    await this.usersRepository.createQueryBuilder('user').getMany();
+    const findAllUserWithRepositoryQueryBuilder = await this.usersRepository
+      .createQueryBuilder('user')
+      .getMany();
+    return findAllUserWithRepositoryQueryBuilder;
   }
 
   async findOne(id: number) {
     // return this.usersRepository.findOneBy({ id });
     const findUserWithRepositoryQueryBuilder = await this.usersRepository
       .createQueryBuilder()
-      .where('user.id :userId', { User: id })
+      .where('user.id = :userId', { userId: id })
       .getOne();
     return findUserWithRepositoryQueryBuilder;
   }
@@ -36,7 +39,8 @@ export class UsersService {
       .createQueryBuilder()
       .update(User)
       .set(updateUserDto)
-      .where('id = :id', { id: id });
+      .where('id = :id', { id: id })
+      .execute();
     return updateUserWithRepositoryQueryBuilder;
   }
 
