@@ -9,6 +9,7 @@ import {
 import { User } from 'src/user/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -28,21 +29,20 @@ export class AuthController {
     type: User,
   })
   @ApiBadRequestResponse({ description: 'User cannot login. Try again!' })
-  @UseGuards(AuthGuard('local'))
   @Post('signin')
   async signin(
     @Body() dto: AuthDto,
-    @Res({ passthrough: true }) res: Response,
+    // @Res({ passthrough: true }) res: Response,
   ) {
     const token = await this.authService.signin(dto);
     console.log('return token', token);
 
-    res.cookie('jwt', token);
+    // res.cookie('jwt', token);
     return { msg: 'signin success' };
   }
   @Post('logout')
   async logout(@Res({ passthrough: true }) response: Response) {
-    response.clearCookie('jwt');
+    // response.clearCookie('jwt');
     return {
       msg: 'log success',
     };
