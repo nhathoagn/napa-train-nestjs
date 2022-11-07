@@ -8,12 +8,12 @@ export class AuthDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  email?: string;
+  email: string;
   @ApiProperty({
     description: 'The password of the User',
     example: 'hoang123',
   })
   @IsString()
   @IsNotEmpty()
-  password?: string;
+  password: string;
 }

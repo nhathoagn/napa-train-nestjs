@@ -1,7 +1,6 @@
 import { Controller, Post, Body, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
-import { Response } from 'express';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -9,18 +8,19 @@ import {
 } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-  @UseGuards(AuthGuard('local'))
+
   @ApiCreatedResponse({
     description: 'Created user object as response',
     type: User,
   })
   @ApiBadRequestResponse({ description: 'User cannot register. Try again!' })
   @Post('/signup')
-  signup(@Body() dto: AuthDto) {
+  signup(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
     return this.authService.signup(dto);
   }
   @ApiCreatedResponse({
@@ -28,15 +28,23 @@ export class AuthController {
     type: User,
   })
   @ApiBadRequestResponse({ description: 'User cannot login. Try again!' })
+  @UseGuards(AuthGuard('local'))
   @Post('signin')
-  signin(@Body() dto: AuthDto) {
-    return this.authService.signin(dto);
+  async signin(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = await this.authService.signin(dto);
+    console.log('return token', token);
+
+    res.cookie('jwt', token);
+    return { msg: 'signin success' };
   }
   @Post('logout')
   async logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('jwt');
     return {
-      msg: 'success',
+      msg: 'log success',
     };
   }
 }

@@ -32,8 +32,8 @@ export class AuthService {
     }
   }
   async signin(dto: AuthDto) {
-    const userExit = await this.UserService.find({ email: dto.email });
-    const userPassword = userExit[0].password;
+    const userExit = await this.UserService.findByEmail({ email: dto.email });
+    const userPassword = userExit.password;
     if (!userExit) {
       throw new ForbiddenException('Credentials taken');
     }
@@ -41,11 +41,13 @@ export class AuthService {
     if (!isMatch) {
       throw new ForbiddenException('Credentials taken');
     }
-    const token = this.signToken({
-      userId: userExit[0].id.toString(),
-      email: userExit[0].email,
+    const token = await this.signToken({
+      userId: userExit.id.toString(),
+      email: userExit.email,
     });
-    return response.cookie('jwt', token, { httpOnly: true });
+    console.log('token', token);
+
+    return token;
   }
   async signToken(tokenDto: CreateTokenDto): Promise<{ access_token: string }> {
     const payload = {
@@ -53,6 +55,7 @@ export class AuthService {
       email: tokenDto.email,
     };
     const secretKey = this.config.get('JWT_SECRET');
+    console.log('secretKey', secretKey);
 
     const token = await this.jwt.signAsync(payload, {
       expiresIn: '15m',
@@ -64,12 +67,10 @@ export class AuthService {
     };
   }
   async validateUser(dto: AuthDto) {
-    const user = await this.UserService.find({ email: dto.email });
-    const password = dto.password;
-    const isMatch = await argon.verify(user[0].password, password);
-    if (!isMatch) {
+    const user = await this.UserService.findByEmail({ email: dto.email });
+    if (!user) {
       return null;
     }
-    return user[0];
+    return user;
   }
 }
