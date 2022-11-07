@@ -25,6 +25,11 @@ export class UserService {
     }
     return this.userRepository.findOneBy({ id });
   }
+  findByEmail(createUserDto: CreateUserDto) {
+    return this.userRepository.findOneBy({
+      email: createUserDto.email,
+    });
+  }
   find(createUserDto: CreateUserDto) {
     return this.userRepository.find({ where: { email: createUserDto.email } });
   }

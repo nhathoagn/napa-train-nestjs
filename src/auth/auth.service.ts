@@ -7,11 +7,8 @@ import { AuthDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon from 'argon2';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
 import { CreateTokenDto } from './dto/create-token.dto';
+import { response } from 'express';
 import { UserService } from '../user/user.service';
 @Injectable()
 export class AuthService {
@@ -23,8 +20,9 @@ export class AuthService {
   async signup(dto: AuthDto) {
     const hash = await argon.hash(dto.password);
     try {
-      const userExit = await this.UserService.find({ email: dto.email });
-      if (userExit.length > 0) {
+      const userExit = await this.UserService.findByEmail({ email: dto.email });
+
+      if (userExit) {
         throw new BadRequestException('Email exits');
       }
       const user = this.UserService.create({ ...dto, password: hash });
@@ -43,21 +41,24 @@ export class AuthService {
     if (!isMatch) {
       throw new ForbiddenException('Credentials taken');
     }
-    return this.signToken({
+    const token = this.signToken({
       userId: userExit[0].id.toString(),
       email: userExit[0].email,
     });
+    return response.cookie('jwt', token, { httpOnly: true });
   }
   async signToken(tokenDto: CreateTokenDto): Promise<{ access_token: string }> {
     const payload = {
       sub: tokenDto.userId,
       email: tokenDto.email,
     };
-    const secret = this.config.get('JWT_SECRET');
+    const secretKey = this.config.get('JWT_SECRET');
+
     const token = await this.jwt.signAsync(payload, {
       expiresIn: '15m',
-      secret: secret,
+      secret: secretKey,
     });
+
     return {
       access_token: token,
     };
@@ -69,5 +70,6 @@ export class AuthService {
     if (!isMatch) {
       return null;
     }
+    return user[0];
   }
 }
