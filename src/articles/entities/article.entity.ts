@@ -19,6 +19,7 @@ export class Articles {
   @ApiProperty({ description: 'Content of Articles' })
   @Column()
   content: string;
+  @ApiProperty({ description: 'author of Articles' })
   @ManyToOne(() => User, (user) => user.articles)
   user: User;
   @OneToMany(() => Comments, (comments) => comments.articles)

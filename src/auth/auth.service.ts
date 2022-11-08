@@ -10,6 +10,8 @@ import * as argon from 'argon2';
 import { CreateTokenDto } from './dto/create-token.dto';
 import { response } from 'express';
 import { UserService } from '../user/user.service';
+import { RefeshToken } from './dto/refeshToken.dto';
+import { LogoutDto } from './dto/logout.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -41,30 +43,50 @@ export class AuthService {
     if (!isMatch) {
       throw new ForbiddenException('Credentials taken');
     }
+
     const token = await this.signToken({
       userId: userExit.id.toString(),
       email: userExit.email,
     });
-    console.log('token11', token);
-
+    await this.updateRefeshToken({
+      userId: userExit.id,
+      refeshToken: token.refeshToken,
+    });
     return token;
   }
-  async signToken(tokenDto: CreateTokenDto): Promise<{ access_token: string }> {
+  async logout(logout: LogoutDto) {
+    this.UserService.update(logout.userId, {
+      refeshToken: '',
+    });
+  }
+  async signToken(
+    tokenDto: CreateTokenDto,
+  ): Promise<{ access_token: string; refeshToken: string }> {
     const payload = {
-      sub: tokenDto.userId,
+      id: tokenDto.userId,
       email: tokenDto.email,
     };
     const secretKey = this.config.get('JWT_SECRET');
-    console.log('secretKey', secretKey);
+    const refeshKey = this.config.get('JWT_REFRESH_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
       expiresIn: '15m',
       secret: secretKey,
     });
-
+    const refeshToken = await this.jwt.signAsync(payload, {
+      expiresIn: '7d',
+      secret: refeshKey,
+    });
     return {
       access_token: token,
+      refeshToken: refeshToken,
     };
+  }
+  async updateRefeshToken(updateRTDto: RefeshToken) {
+    const hashedRefreshToken = await argon.hash(updateRTDto.refeshToken);
+    await this.UserService.update(updateRTDto.userId, {
+      refeshToken: hashedRefreshToken,
+    });
   }
   async validateUser(dto: AuthDto) {
     const user = await this.UserService.findByEmail({ email: dto.email });

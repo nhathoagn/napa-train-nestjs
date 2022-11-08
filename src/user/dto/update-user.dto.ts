@@ -25,4 +25,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsString()
   address?: string;
+  @IsOptional()
+  @IsString()
+  refeshToken: string;
 }
