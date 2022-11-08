@@ -7,12 +7,11 @@ import { AuthDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon from 'argon2';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
 import { CreateTokenDto } from './dto/create-token.dto';
+import { response } from 'express';
 import { UserService } from '../user/user.service';
+import { RefeshToken } from './dto/refeshToken.dto';
+import { LogoutDto } from './dto/logout.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -23,8 +22,9 @@ export class AuthService {
   async signup(dto: AuthDto) {
     const hash = await argon.hash(dto.password);
     try {
-      const userExit = await this.UserService.find({ email: dto.email });
-      if (userExit.length > 0) {
+      const userExit = await this.UserService.findByEmail({ email: dto.email });
+
+      if (userExit) {
         throw new BadRequestException('Email exits');
       }
       const user = this.UserService.create({ ...dto, password: hash });
@@ -34,8 +34,8 @@ export class AuthService {
     }
   }
   async signin(dto: AuthDto) {
-    const userExit = await this.UserService.find({ email: dto.email });
-    const userPassword = userExit[0].password;
+    const userExit = await this.UserService.findByEmail({ email: dto.email });
+    const userPassword = userExit.password;
     if (!userExit) {
       throw new ForbiddenException('Credentials taken');
     }
@@ -43,31 +43,56 @@ export class AuthService {
     if (!isMatch) {
       throw new ForbiddenException('Credentials taken');
     }
-    return this.signToken({
-      userId: userExit[0].id.toString(),
-      email: userExit[0].email,
+
+    const token = await this.signToken({
+      userId: userExit.id.toString(),
+      email: userExit.email,
+    });
+    await this.updateRefeshToken({
+      userId: userExit.id,
+      refeshToken: token.refeshToken,
+    });
+    return token;
+  }
+  async logout(logout: LogoutDto) {
+    this.UserService.update(logout.userId, {
+      refeshToken: '',
     });
   }
-  async signToken(tokenDto: CreateTokenDto): Promise<{ access_token: string }> {
+  async signToken(
+    tokenDto: CreateTokenDto,
+  ): Promise<{ access_token: string; refeshToken: string }> {
     const payload = {
-      sub: tokenDto.userId,
+      id: tokenDto.userId,
       email: tokenDto.email,
     };
-    const secret = this.config.get('JWT_SECRET');
+    const secretKey = this.config.get('JWT_SECRET');
+    const refeshKey = this.config.get('JWT_REFRESH_SECRET');
+
     const token = await this.jwt.signAsync(payload, {
       expiresIn: '15m',
-      secret: secret,
+      secret: secretKey,
+    });
+    const refeshToken = await this.jwt.signAsync(payload, {
+      expiresIn: '7d',
+      secret: refeshKey,
     });
     return {
       access_token: token,
+      refeshToken: refeshToken,
     };
   }
+  async updateRefeshToken(updateRTDto: RefeshToken) {
+    const hashedRefreshToken = await argon.hash(updateRTDto.refeshToken);
+    await this.UserService.update(updateRTDto.userId, {
+      refeshToken: hashedRefreshToken,
+    });
+  }
   async validateUser(dto: AuthDto) {
-    const user = await this.UserService.find({ email: dto.email });
-    const password = dto.password;
-    const isMatch = await argon.verify(user[0].password, password);
-    if (!isMatch) {
+    const user = await this.UserService.findByEmail({ email: dto.email });
+    if (!user) {
       return null;
     }
+    return user;
   }
 }

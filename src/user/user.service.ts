@@ -16,7 +16,7 @@ export class UserService {
   }
 
   findAll() {
-    return `This action returns all user`;
+    return this.userRepository.find();
   }
 
   findOne(id: number) {
@@ -24,6 +24,11 @@ export class UserService {
       return null;
     }
     return this.userRepository.findOneBy({ id });
+  }
+  findByEmail(createUserDto: CreateUserDto) {
+    return this.userRepository.findOneBy({
+      email: createUserDto.email,
+    });
   }
   find(createUserDto: CreateUserDto) {
     return this.userRepository.find({ where: { email: createUserDto.email } });
