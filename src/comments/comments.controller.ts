@@ -6,18 +6,27 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
+import { InfoArticle } from 'src/articles/dto/info-article.dto';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-
-@Controller('comments')
+@UseGuards(JwtAuthGuard)
+@Controller('/article/')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentsService.create(createCommentDto);
+  @Post('/:id/comment')
+  create(
+    @Body() createCommentDto: CreateCommentDto,
+    @Param('id') idArticle: number,
+  ) {
+    console.log('req', createCommentDto, idArticle);
+
+    return this.commentsService.create(createCommentDto, idArticle);
   }
 
   @Get()

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InfoUser } from 'src/user/dto/info-user.dto';
 import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -8,8 +9,13 @@ import { Articles } from './entities/article.entity';
 @Injectable()
 export class ArticlesService {
   @InjectRepository(Articles) private articlesRepository: Repository<Articles>;
-  create(createArticleDto: CreateArticleDto) {
-    const article = this.articlesRepository.create(createArticleDto);
+  create(createArticleDto: CreateArticleDto, user: InfoUser) {
+    console.log('article', createArticleDto);
+
+    const article = this.articlesRepository.create({
+      ...createArticleDto,
+      user,
+    });
     return this.articlesRepository.save(article);
   }
 

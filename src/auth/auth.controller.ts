@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  UseGuards,
+  Req,
+  Get,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import {
@@ -9,6 +17,11 @@ import {
 import { User } from 'src/user/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { CurrentUser } from './decorator/current-user.decorator';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { InfoUser } from 'src/user/dto/info-user.dto';
+import { get } from 'http';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -35,8 +48,12 @@ export class AuthController {
 
     return { msg: 'signin success' };
   }
-  @Post('logout')
-  async logout(@Res({ passthrough: true }) response: Response) {
+  @ApiBadRequestResponse({ description: 'error. Try again!' })
+  @UseGuards(JwtAuthGuard)
+  @Get('logout')
+  async logout(@CurrentUser() user: InfoUser) {
+    console.log('req', user);
+    this.authService.logout(user);
     return {
       msg: 'log success',
     };
