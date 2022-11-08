@@ -1,5 +1,7 @@
 import { User } from '../src/user/entities/user.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import { Articles } from 'src/articles/entities/article.entity';
+import { Comments } from 'src/comments/entities/comment.entity';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'mysql',
@@ -8,7 +10,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username: 'root',
   password: 'password',
   database: 'social',
-  entities: [User],
+  entities: [User, Articles, Comments],
   synchronize: true,
 };
 const dataSource = new DataSource(dataSourceOptions);

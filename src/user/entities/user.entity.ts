@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Articles } from 'src/articles/entities/article.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class User {
   @ApiProperty({ description: 'Primary key as User ID', example: 1 })
@@ -20,4 +21,6 @@ export class User {
   @ApiProperty({ description: 'address' })
   @Column({ default: false })
   address: string;
+  @OneToMany(() => Articles, (articles) => articles.user)
+  articles: Articles[];
 }

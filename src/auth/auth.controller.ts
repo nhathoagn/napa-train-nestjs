@@ -28,21 +28,15 @@ export class AuthController {
     type: User,
   })
   @ApiBadRequestResponse({ description: 'User cannot login. Try again!' })
-  @UseGuards(AuthGuard('local'))
   @Post('signin')
-  async signin(
-    @Body() dto: AuthDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async signin(@Body() dto: AuthDto) {
     const token = await this.authService.signin(dto);
     console.log('return token', token);
 
-    res.cookie('jwt', token);
     return { msg: 'signin success' };
   }
   @Post('logout')
   async logout(@Res({ passthrough: true }) response: Response) {
-    response.clearCookie('jwt');
     return {
       msg: 'log success',
     };

@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle('Social  API')
     .setDescription('Social API description')
     .setVersion('0.0.1')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, option);
   SwaggerModule.setup('api', app, document);

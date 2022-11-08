@@ -45,7 +45,7 @@ export class AuthService {
       userId: userExit.id.toString(),
       email: userExit.email,
     });
-    console.log('token', token);
+    console.log('token11', token);
 
     return token;
   }
