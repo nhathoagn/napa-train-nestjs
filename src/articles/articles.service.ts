@@ -30,6 +30,7 @@ export class ArticlesService {
   ): Promise<Pagination<CreateArticleDto>> {
     const queryBuilder = this.articlesRepository.createQueryBuilder('article');
     queryBuilder.orderBy('article.id', 'ASC');
+    queryBuilder.leftJoinAndSelect('article.comments', 'comments');
     return paginate<CreateArticleDto>(queryBuilder, options);
   }
   findAll() {
