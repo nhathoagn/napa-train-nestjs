@@ -1,37 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { InfoArticle } from 'src/articles/dto/info-article.dto';
+import { ArticlesService } from 'src/articles/articles.service';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+
 import { Comments } from './entities/comment.entity';
 
 @Injectable()
 export class CommentsService {
-  @InjectRepository(Comments) private commentRepository: Repository<Comments>;
-  create(createCommentDto: CreateCommentDto, idArticle: number) {
-    // const comment = this.commentRepository.create({
-    //   ...createCommentDto,
-    //   idArticle,
-    // });
-
-    // return this.commentRepository.save(comment);
-    return 0;
+  constructor(
+    @InjectRepository(Comments) private commentRepository: Repository<Comments>,
+    private articleService: ArticlesService,
+  ) {}
+  async create(user: User, comments: CreateCommentDto, articleId: number) {
+    const createComment = this.commentRepository.create(comments);
+    createComment.author = user;
+    const comment = await createComment.save();
+    const article = await this.articleService.findArticle(articleId);
+    article.comments.push(comment);
+    return this.commentRepository.findOne({
+      where: { content: comments.content },
+      relations: ['articles', 'author'],
+    });
   }
 
-  findAll() {
-    return `This action returns all comments`;
-  }
+  async remove(user: User, id: number) {
+    console.log('id', id);
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
-  }
-
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+    const comment = await this.commentRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
+    await comment.remove();
+    return comment;
   }
 }

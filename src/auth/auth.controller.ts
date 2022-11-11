@@ -44,9 +44,8 @@ export class AuthController {
   @Post('signin')
   async signin(@Body() dto: AuthDto) {
     const token = await this.authService.signin(dto);
-    console.log('return token', token);
 
-    return { msg: 'signin success' };
+    return { token: token, msg: 'signin success' };
   }
   @ApiBadRequestResponse({ description: 'error. Try again!' })
   @UseGuards(JwtAuthGuard)

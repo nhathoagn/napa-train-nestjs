@@ -43,10 +43,10 @@ export class AuthService {
     if (!isMatch) {
       throw new ForbiddenException('Credentials taken');
     }
-
     const token = await this.signToken({
       userId: userExit.id.toString(),
       email: userExit.email,
+      username: userExit.username,
     });
     await this.updateRefeshToken({
       userId: userExit.id,
@@ -65,6 +65,7 @@ export class AuthService {
     const payload = {
       id: tokenDto.userId,
       email: tokenDto.email,
+      username: tokenDto.username,
     };
     const secretKey = this.config.get('JWT_SECRET');
     const refeshKey = this.config.get('JWT_REFRESH_SECRET');
@@ -90,6 +91,8 @@ export class AuthService {
   }
   async validateUser(dto: AuthDto) {
     const user = await this.UserService.findByEmail({ email: dto.email });
+    console.log('22', user);
+
     if (!user) {
       return null;
     }

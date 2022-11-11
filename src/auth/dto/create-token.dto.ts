@@ -5,4 +5,6 @@ export class CreateTokenDto {
   userId: string;
   @IsEmail()
   email: string;
+  @IsString()
+  username: string;
 }

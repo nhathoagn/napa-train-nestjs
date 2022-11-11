@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CommentsController } from './comments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comments } from './entities/comment.entity';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { ArticlesModule } from 'src/articles/articles.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comments])],
-  controllers: [CommentsController],
+  imports: [ArticlesModule, TypeOrmModule.forFeature([Comments])],
   providers: [CommentsService, JwtAuthGuard],
+  exports: [CommentsService],
 })
 export class CommentsModule {}

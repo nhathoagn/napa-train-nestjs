@@ -5,10 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Articles } from './entities/article.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
+import { CommentsModule } from 'src/comments/comments.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Articles]), PassportModule],
+  imports: [
+    TypeOrmModule.forFeature([Articles]),
+    PassportModule,
+    CommentsModule,
+  ],
   controllers: [ArticlesController],
   providers: [ArticlesService, JwtStrategy],
+  exports: [ArticlesService],
 })
 export class ArticlesModule {}
