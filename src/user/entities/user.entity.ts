@@ -2,15 +2,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { classToPlain, Exclude } from 'class-transformer';
 import { Articles } from 'src/articles/entities/article.entity';
+import { Favorite } from 'src/favorite/favorite.entity';
 import { Comments } from 'src/comments/entities/comment.entity';
-import { UserResponse } from 'src/common/user.models';
 import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -51,12 +49,11 @@ export class User extends BaseEntity {
   refeshToken: string;
 
   @ApiProperty({ description: 'followers' })
-  @ManyToMany(() => User, (user) => user.followee)
-  @JoinTable()
+  @ManyToOne(() => User, (user) => user.followee)
   followers: User[];
 
   @ApiProperty({ description: 'followee' })
-  @ManyToMany(() => User, (user) => user.followers)
+  @OneToMany(() => User, (user) => user.followers)
   followee: User[];
 
   @OneToMany(() => Articles, (articles) => articles.user)
@@ -65,7 +62,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Comments, (comments) => comments.author)
   comments: Comments[];
 
-  @ManyToMany(() => Articles, (articles) => articles.favoritesBy)
-  @JoinColumn()
-  favorites: Articles[];
+  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  favorites: Favorite[];
 }

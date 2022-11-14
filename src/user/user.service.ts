@@ -41,6 +41,17 @@ export class UserService {
     });
   }
 
+  async findUserFavorites(id: number) {
+    if (!id) {
+      return null;
+    }
+    const favoriter = await this.userRepository.findOne({
+      where: { id },
+      relations: ['favorites'],
+    });
+    return favoriter;
+  }
+
   find(createUserDto: CreateUserDto) {
     return this.userRepository.find({ where: { email: createUserDto.email } });
   }
@@ -69,5 +80,15 @@ export class UserService {
     user.followers.filter((followers) => followers != currentUser);
     await user.save();
     return user;
+  }
+  async unfavorite(articleId: number, user: User) {
+    const user_Ar = await this.userRepository.findOne({
+      where: { id: user.id },
+      relations: ['favorites'],
+    });
+    console.log('user_Ar', user_Ar);
+
+    // await this.userRepository.remove(user_Ar);
+    return { msg: 'infavorite success' };
   }
 }

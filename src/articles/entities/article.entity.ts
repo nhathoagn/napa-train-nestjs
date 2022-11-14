@@ -5,13 +5,12 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
+  Like,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Favorite } from '../../favorite/favorite.entity';
 @Entity('articles')
 export class Articles extends BaseEntity {
   @ApiProperty({ description: 'Primary key as Article  ID', example: 1 })
@@ -30,10 +29,12 @@ export class Articles extends BaseEntity {
   @ManyToOne(() => User, (user) => user.articles)
   user: User;
 
-  @ManyToMany(() => User, (user) => user.favorites)
-  @JoinTable()
-  favoritesBy: User[];
+  @ManyToOne(() => User, (user) => user.favorites)
+  favoritesBy: User;
 
   @OneToMany(() => Comments, (comments) => comments.articles)
   comments: Comments[];
+
+  @OneToMany(() => Favorite, (favorite) => favorite.articles)
+  favorites: Favorite[];
 }

@@ -8,6 +8,8 @@ import { dataSourceOptions } from '../db/data-source';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ArticlesModule } from './articles/articles.module';
+import { Favorite } from './favorite/favorite.entity';
+import { FavoriteModule } from './favorite/favorite.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
@@ -18,6 +20,7 @@ import { ArticlesModule } from './articles/articles.module';
     CommentsModule,
     AuthModule,
     ArticlesModule,
+    FavoriteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

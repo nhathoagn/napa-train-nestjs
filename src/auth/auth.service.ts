@@ -91,8 +91,6 @@ export class AuthService {
   }
   async validateUser(dto: AuthDto) {
     const user = await this.UserService.findByEmail({ email: dto.email });
-    console.log('22', user);
-
     if (!user) {
       return null;
     }

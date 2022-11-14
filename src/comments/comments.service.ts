@@ -19,18 +19,16 @@ export class CommentsService {
   ) {}
   async create(user: User, comments: CreateCommentDto, articleId: number) {
     const article = await this.articleService.findArticle(articleId);
-    console.log('article', article);
-
-    const createComment = this.commentRepository.create(comments);
-    createComment.author = user;
-    createComment.articles = article;
+    const createComment = this.commentRepository.create({
+      ...comments,
+      author: user,
+      articles: article,
+    });
     await createComment.save();
     return { msg: 'comments success' };
   }
 
   async remove(user: User, id: number) {
-    console.log('id', id);
-
     const comment = await this.commentRepository.findOne({
       where: { id },
       relations: ['author'],

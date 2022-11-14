@@ -6,12 +6,16 @@ import { Articles } from './entities/article.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { CommentsModule } from 'src/comments/comments.module';
+import { UserModule } from 'src/user/user.module';
+import { FavoriteModule } from 'src/favorite/favorite.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Articles]),
     forwardRef(() => CommentsModule),
     PassportModule,
+    UserModule,
+    FavoriteModule,
   ],
   controllers: [ArticlesController],
   providers: [ArticlesService, JwtStrategy],

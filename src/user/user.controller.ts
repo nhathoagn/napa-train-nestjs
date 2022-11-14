@@ -42,7 +42,6 @@ export class UserController {
     @CurrentUser() user: User,
     @Param('username') username: string,
   ) {
-    const profile = this.userService.unfollowUser(user, username);
-    return profile;
+    return this.userService.unfollowUser(user, username);
   }
 }

@@ -79,14 +79,12 @@ export class ArticlesController {
     @Body() comments: CreateCommentDto,
     @Param('articleId') articleId: number,
   ) {
-    const comment = this.commentService.create(user, comments, articleId);
-    return comment;
+    return this.commentService.create(user, comments, articleId);
   }
 
   @Delete(':articleId/comment/:id')
   removeComment(@CurrentUser() user: User, @Param('id') id: number) {
-    const comment = this.commentService.remove(user, id);
-    return comment;
+    return this.commentService.remove(user, id);
   }
 
   @Post(':articleId/favorite')
@@ -94,8 +92,7 @@ export class ArticlesController {
     @Param('articleId') articleId: number,
     @CurrentUser() user: User,
   ) {
-    const article = await this.articlesService.favoriteArticle(articleId, user);
-    return { article };
+    return await this.articlesService.favoriteArticle(articleId, user);
   }
 
   @Post(':articleId/unfavorite')
@@ -103,10 +100,6 @@ export class ArticlesController {
     @Param('articleId') articleId: number,
     @CurrentUser() user: User,
   ) {
-    const article = await this.articlesService.unfavoriteArticle(
-      articleId,
-      user,
-    );
-    return { article };
+    return await this.articlesService.unfavoriteArticle(articleId, user);
   }
 }
