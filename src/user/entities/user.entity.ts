@@ -12,6 +12,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Follow } from 'src/follow/follow.entity';
 @Entity('user')
 export class User extends BaseEntity {
   @ApiProperty({ description: 'Primary key as User ID', example: 1 })
@@ -49,12 +50,12 @@ export class User extends BaseEntity {
   refeshToken: string;
 
   @ApiProperty({ description: 'followers' })
-  @ManyToOne(() => User, (user) => user.followee)
-  followers: User[];
+  @OneToMany(() => User, (user) => user.followee)
+  followers: Follow[];
 
   @ApiProperty({ description: 'followee' })
   @OneToMany(() => User, (user) => user.followers)
-  followee: User[];
+  followee: Follow[];
 
   @OneToMany(() => Articles, (articles) => articles.user)
   articles: Articles[];

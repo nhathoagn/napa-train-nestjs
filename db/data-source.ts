@@ -3,6 +3,8 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { Articles } from 'src/articles/entities/article.entity';
 import { Comments } from 'src/comments/entities/comment.entity';
 import { Favorite } from 'src/favorite/favorite.entity';
+import { Follow } from 'src/follow/follow.entity';
+import { Reply } from 'src/reply/entities/reply.entity';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'mysql',
@@ -11,7 +13,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username: 'root',
   password: 'password',
   database: 'social',
-  entities: [User, Articles, Comments, Favorite],
+  entities: [User, Articles, Comments, Favorite, Follow, Reply],
   synchronize: true,
 };
 const dataSource = new DataSource(dataSourceOptions);

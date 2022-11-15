@@ -7,9 +7,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Reply } from '../../reply/entities/reply.entity';
 @Entity()
 export class Comments extends BaseEntity {
   @ApiProperty({ description: 'Primary key as Comment ID', example: 1 })
@@ -32,4 +34,7 @@ export class Comments extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.comments)
   author: User;
+
+  @OneToMany(() => Reply, (reply) => reply.comment)
+  reply: Reply[];
 }

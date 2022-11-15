@@ -8,6 +8,7 @@ import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { CommentsModule } from 'src/comments/comments.module';
 import { UserModule } from 'src/user/user.module';
 import { FavoriteModule } from 'src/favorite/favorite.module';
+import { ReplyModule } from 'src/reply/reply.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { FavoriteModule } from 'src/favorite/favorite.module';
     forwardRef(() => CommentsModule),
     PassportModule,
     UserModule,
-    FavoriteModule,
+    forwardRef(() => FavoriteModule),
   ],
   controllers: [ArticlesController],
   providers: [ArticlesService, JwtStrategy],

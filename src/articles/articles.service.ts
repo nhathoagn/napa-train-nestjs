@@ -11,6 +11,7 @@ import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/create-article.dto';
+import { InfoArticle } from './dto/info-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Articles } from './entities/article.entity';
 
@@ -19,8 +20,6 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Articles)
     private articlesRepository: Repository<Articles>,
-    private userService: UserService,
-    private favoriteService: FavoriteService,
   ) {}
   create(createArticleDto: CreateArticleDto, user: InfoUser) {
     const article = this.articlesRepository.create({
@@ -53,7 +52,11 @@ export class ArticlesService {
     }
     return this.articlesRepository.findOneBy({ id });
   }
-
+  async find(articleId: InfoArticle) {
+    return await this.articlesRepository.findOne({
+      where: { id: articleId.articleId },
+    });
+  }
   async update(id: number, updateArticleDto: UpdateArticleDto) {
     const article = await this.findOne(id);
     if (!article) {
@@ -68,40 +71,5 @@ export class ArticlesService {
       throw new NotFoundException('user not found');
     }
     return this.articlesRepository.remove(article);
-  }
-
-  async favoriteArticle(articleId: number, user: User) {
-    // const article = await this.articlesRepository.findOne({
-    //   where: { id: articleId },
-    // });
-    // article.favoritesBy = user;
-    // const favorite = await this.userService.findUserFavorites(user.id);
-    // favorite.favorites.push(article);
-    // favorite.save();
-    // return await this.articlesRepository.find({
-    //   where: {
-    //     id: articleId,
-    //   },
-    //   relations: ['favoritesBy'],
-    // });
-    const article = await this.articlesRepository.findOne({
-      where: { id: articleId },
-    });
-    await this.favoriteService.createFavorite(article, user);
-    return { msg: 'success' };
-  }
-  async unfavoriteArticle(articleId: number, user: User) {
-    // const article = await this.articlesRepository.findOne({
-    //   where: { id: articleId },
-    //   relations: ['favorites'],
-    // });
-    await this.favoriteService.removeFavorite(articleId, user);
-    // const unfavorite = await this.userService.unfavorite(articleId, user);
-    return await this.articlesRepository.findOne({
-      where: {
-        id: articleId,
-      },
-      relations: ['favorites'],
-    });
   }
 }

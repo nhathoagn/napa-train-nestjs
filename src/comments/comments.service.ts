@@ -28,12 +28,21 @@ export class CommentsService {
     return { msg: 'comments success' };
   }
 
-  async remove(user: User, id: number) {
+  async remove(user: User, commentid: number) {
     const comment = await this.commentRepository.findOne({
-      where: { id },
+      where: { id: commentid },
       relations: ['author'],
     });
     await comment.remove();
+    return comment;
+  }
+
+  async findComment(user: User, commentId: number) {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
+      relations: ['author'],
+    });
+    console.log(comment);
     return comment;
   }
 }

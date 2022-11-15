@@ -40,6 +40,11 @@ export class UserService {
       email: createUserDto.email,
     });
   }
+  findByUsername(username: string) {
+    return this.userRepository.findOneBy({
+      username: username,
+    });
+  }
 
   async findUserFavorites(id: number) {
     if (!id) {
@@ -61,26 +66,26 @@ export class UserService {
     return this.userRepository.save({ ...user, ...updateUserDto });
   }
 
-  async followUser(currentUser: User, username: string) {
-    const user = await this.userRepository.findOne({
-      where: { username },
-      relations: ['followers'],
-    });
-    const userDetail = await this.findOne(currentUser.id);
-    user.followers.push(userDetail);
-    await user.save();
-    return user;
-  }
+  // async followUser(currentUser: User, username: string) {
+  //   const user = await this.userRepository.findOne({
+  //     where: { username },
+  //     relations: ['followers'],
+  //   });
+  //   const userDetail = await this.findOne(currentUser.id);
+  //   user.followers.push(userDetail);
+  //   await user.save();
+  //   return user;
+  // }
 
-  async unfollowUser(currentUser: User, username: string) {
-    const user = await this.userRepository.findOne({
-      where: { username },
-      relations: ['followers'],
-    });
-    user.followers.filter((followers) => followers != currentUser);
-    await user.save();
-    return user;
-  }
+  // async unfollowUser(currentUser: User, username: string) {
+  //   const user = await this.userRepository.findOne({
+  //     where: { username },
+  //     relations: ['followers'],
+  //   });
+  //   user.followers.filter((followers) => followers != currentUser);
+  //   await user.save();
+  //   return user;
+  // }
   async unfavorite(articleId: number, user: User) {
     const user_Ar = await this.userRepository.findOne({
       where: { id: user.id },

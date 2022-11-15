@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ArticlesModule } from './articles/articles.module';
 import { Favorite } from './favorite/favorite.entity';
 import { FavoriteModule } from './favorite/favorite.module';
+import { ReplyModule } from './reply/reply.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
@@ -21,6 +22,7 @@ import { FavoriteModule } from './favorite/favorite.module';
     AuthModule,
     ArticlesModule,
     FavoriteModule,
+    ReplyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
