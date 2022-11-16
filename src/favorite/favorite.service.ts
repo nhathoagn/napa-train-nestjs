@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticlesService } from 'src/articles/articles.service';
 import { InfoArticle } from 'src/articles/dto/info-article.dto';
-import { Articles } from 'src/articles/entities/article.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Favorite } from './favorite.entity';
@@ -32,8 +31,8 @@ export class FavoriteService {
       .execute();
     return query;
   }
-  async favoriteArticle(articleId: InfoArticle, user: User) {
-    const article = await this.articlesService.find(articleId);
+  async favoriteArticle(params: InfoArticle, user: User) {
+    const article = await this.articlesService.find(params);
     const favorite = this.favoriteRepository.create({
       articles: article,
       user: user,
@@ -47,6 +46,7 @@ export class FavoriteService {
     if (!favorite) {
       throw new NotFoundException('user not found');
     }
-    return this.favoriteRepository.remove(favorite);
+    await this.favoriteRepository.remove(favorite);
+    return { msg: 'success' };
   }
 }

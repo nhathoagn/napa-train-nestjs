@@ -1,9 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticlesService } from 'src/articles/articles.service';
-import { Articles } from 'src/articles/entities/article.entity';
+import { ReplyDto } from 'src/reply/dto/reply.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { CommentsDTO } from './dto/comment.dto';
 
 import { CreateCommentDto } from './dto/create-comment.dto';
 
@@ -37,12 +38,11 @@ export class CommentsService {
     return comment;
   }
 
-  async findComment(user: User, commentId: number) {
+  async findComment(commentId: ReplyDto) {
     const comment = await this.commentRepository.findOne({
-      where: { id: commentId },
+      where: { id: commentId.commentId },
       relations: ['author'],
     });
-    console.log(comment);
     return comment;
   }
 }

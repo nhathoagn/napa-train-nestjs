@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon from 'argon2';
 import { CreateTokenDto } from './dto/create-token.dto';
-import { response } from 'express';
 import { UserService } from '../user/user.service';
 import { RefeshToken } from './dto/refeshToken.dto';
 import { LogoutDto } from './dto/logout.dto';

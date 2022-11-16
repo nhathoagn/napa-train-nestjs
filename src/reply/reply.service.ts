@@ -1,10 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArticlesService } from 'src/articles/articles.service';
 import { CommentsService } from 'src/comments/comments.service';
+import { CommentsDTO } from 'src/comments/dto/comment.dto';
 import { CreateCommentDto } from 'src/comments/dto/create-comment.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { ReplyDto } from './dto/reply.dto';
 import { Reply } from './entities/reply.entity';
 
 @Injectable()
@@ -19,12 +20,9 @@ export class ReplyService {
   async createReply(
     currentUser: User,
     reply: CreateCommentDto,
-    commentId: number,
+    commentId: ReplyDto,
   ) {
-    const comment = await this.commentService.findComment(
-      currentUser,
-      commentId,
-    );
+    const comment = await this.commentService.findComment(commentId);
     const createReply = this.replyRepository.create({
       conten: reply.content,
       comment: comment,

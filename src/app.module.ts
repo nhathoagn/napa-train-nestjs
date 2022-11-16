@@ -8,7 +8,6 @@ import { dataSourceOptions } from '../db/data-source';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ArticlesModule } from './articles/articles.module';
-import { Favorite } from './favorite/favorite.entity';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ReplyModule } from './reply/reply.module';
 @Module({

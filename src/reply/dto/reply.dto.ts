@@ -1,10 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber } from 'class-validator';
-import { BaseEntity } from 'typeorm';
 
-export class CommentsDTO extends BaseEntity {
+export class ReplyDto {
   @IsNotEmpty()
   @IsNumber()
-  @Type(()=>Number)
-  id: number;
+  @Type(() => Number)
+  commentId: number;
 }

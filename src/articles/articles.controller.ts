@@ -10,8 +10,6 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
-  Inject,
-  forwardRef,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';

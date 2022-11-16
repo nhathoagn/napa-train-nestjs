@@ -1,29 +1,36 @@
-import { Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ArticlesService } from 'src/articles/articles.service';
 import { InfoArticle } from 'src/articles/dto/info-article.dto';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { User } from 'src/user/entities/user.entity';
 import { FavoriteService } from './favorite.service';
-
+// export interface Favorite {
+//   articleId: number;
+// }
 @ApiBearerAuth()
-@ApiTags('reply')
+@ApiTags('favorite')
 @UseGuards(JwtAuthGuard)
-@Controller('articles')
+@Controller()
 export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
-  @Post(':articleId/favorite')
+  @Post('favorite/:articleId')
   async favoriteArticle(
-    @Param('articleId') articleId: InfoArticle,
+    @Param() params: InfoArticle,
     @CurrentUser() user: User,
   ) {
-    return await this.favoriteService.favoriteArticle(articleId, user);
+    return await this.favoriteService.favoriteArticle(params, user);
   }
 
-  @Post(':articleId/unfavorite')
+  @Post('unfavorite/:articleId')
   async unfavoriteArticle(
-    @Param('articleId') articleId: InfoArticle,
+    @Param() articleId: InfoArticle,
     @CurrentUser() user: User,
   ) {
     return await this.favoriteService.unfavoriteArticle(articleId, user);

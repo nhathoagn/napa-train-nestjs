@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Res,
-  UseGuards,
-  Req,
-  Get,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import {
@@ -15,7 +7,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
-import { Response } from 'express';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { CurrentUser } from './decorator/current-user.decorator';
 import { InfoUser } from 'src/user/dto/info-user.dto';
@@ -30,7 +21,7 @@ export class AuthController {
   })
   @ApiBadRequestResponse({ description: 'User cannot register. Try again!' })
   @Post('/signup')
-  signup(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
+  signup(@Body() dto: AuthDto) {
     return this.authService.signup(dto);
   }
   @ApiCreatedResponse({

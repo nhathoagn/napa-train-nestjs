@@ -8,7 +8,6 @@ import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { CommentsModule } from 'src/comments/comments.module';
 import { UserModule } from 'src/user/user.module';
 import { FavoriteModule } from 'src/favorite/favorite.module';
-import { ReplyModule } from 'src/reply/reply.module';
 
 @Module({
   imports: [

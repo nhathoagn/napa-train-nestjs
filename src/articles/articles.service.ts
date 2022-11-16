@@ -5,10 +5,7 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { FavoriteService } from 'src/favorite/favorite.service';
 import { InfoUser } from 'src/user/dto/info-user.dto';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { InfoArticle } from './dto/info-article.dto';

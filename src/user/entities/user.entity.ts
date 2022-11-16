@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
-import { classToPlain, Exclude } from 'class-transformer';
+import {  Exclude } from 'class-transformer';
 import { Articles } from 'src/articles/entities/article.entity';
 import { Favorite } from 'src/favorite/favorite.entity';
 import { Comments } from 'src/comments/entities/comment.entity';
@@ -8,7 +8,6 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';

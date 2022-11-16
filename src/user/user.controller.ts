@@ -15,7 +15,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { User } from './entities/user.entity';
-import { FavoriteService } from 'src/favorite/favorite.service';
 import { FollowService } from 'src/follow/follow.service';
 @ApiBearerAuth()
 @ApiTags('User')

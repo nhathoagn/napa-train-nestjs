@@ -5,7 +5,6 @@ import {
   BaseEntity,
   Column,
   Entity,
-  Like,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
