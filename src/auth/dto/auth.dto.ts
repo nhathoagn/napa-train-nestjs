@@ -24,6 +24,5 @@ export class AuthDto {
   })
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   username: string;
 }

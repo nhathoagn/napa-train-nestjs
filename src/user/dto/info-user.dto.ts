@@ -8,10 +8,3 @@ export class InfoUser {
   @IsEmail()
   email: string;
 }
-export interface UserResponse {
-  email: string;
-  username?: string;
-}
-export interface ProfileResponse extends UserResponse {
-  following: boolean | null;
-}

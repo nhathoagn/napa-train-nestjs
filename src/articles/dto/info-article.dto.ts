@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class InfoArticle {
@@ -7,4 +7,3 @@ export class InfoArticle {
   @Type(() => Number)
   articleId: number;
 }
-                

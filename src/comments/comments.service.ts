@@ -4,7 +4,6 @@ import { ArticlesService } from 'src/articles/articles.service';
 import { ReplyDto } from 'src/reply/dto/reply.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CommentsDTO } from './dto/comment.dto';
 
 import { CreateCommentDto } from './dto/create-comment.dto';
 

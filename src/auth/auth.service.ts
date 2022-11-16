@@ -54,9 +54,8 @@ export class AuthService {
     return token;
   }
   async logout(logout: LogoutDto) {
-    this.UserService.update(logout.userId, {
-      refeshToken: '',
-    });
+    await this.UserService.logout(logout);
+    return { msg: 'logout' };
   }
   async signToken(
     tokenDto: CreateTokenDto,

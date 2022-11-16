@@ -2,7 +2,6 @@ import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
-import { CommentsDTO } from 'src/comments/dto/comment.dto';
 import { CreateCommentDto } from 'src/comments/dto/create-comment.dto';
 import { User } from 'src/user/entities/user.entity';
 import { ReplyDto } from './dto/reply.dto';

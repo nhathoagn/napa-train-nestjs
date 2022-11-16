@@ -37,7 +37,7 @@ export class AuthController {
   }
   @ApiBadRequestResponse({ description: 'error. Try again!' })
   @UseGuards(JwtAuthGuard)
-  @Get('logout')
+  @Post('logout')
   async logout(@CurrentUser() user: InfoUser) {
     this.authService.logout(user);
     return {

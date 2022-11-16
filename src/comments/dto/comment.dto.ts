@@ -5,6 +5,6 @@ import { BaseEntity } from 'typeorm';
 export class CommentsDTO extends BaseEntity {
   @IsNotEmpty()
   @IsNumber()
-  @Type(()=>Number)
+  @Type(() => Number)
   id: number;
 }

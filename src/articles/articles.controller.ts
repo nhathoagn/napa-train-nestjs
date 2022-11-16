@@ -19,6 +19,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { ArticleDto } from './dto/article.dto';
 @ApiBearerAuth()
 @ApiTags('articles')
 @UseGuards(JwtAuthGuard)
@@ -36,12 +37,12 @@ export class ArticlesController {
 
   @Get()
   async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 1,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: ArticleDto,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: ArticleDto,
   ): Promise<Pagination<CreateArticleDto>> {
     const options: IPaginationOptions = {
-      limit,
-      page,
+      limit: limit.limit,
+      page: page.page,
     };
     return await this.articlesService.paginate(options);
   }

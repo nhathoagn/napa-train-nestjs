@@ -27,7 +27,7 @@ export class UserController {
     private followService: FollowService,
   ) {}
 
-  @Patch('update/:id')
+  @Patch('/:id')
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LogoutDto } from 'src/auth/dto/logout.dto';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -65,27 +66,11 @@ export class UserService {
     const user = await this.findOne(id);
     return this.userRepository.save({ ...user, ...updateUserDto });
   }
-
-  // async followUser(currentUser: User, username: string) {
-  //   const user = await this.userRepository.findOne({
-  //     where: { username },
-  //     relations: ['followers'],
-  //   });
-  //   const userDetail = await this.findOne(currentUser.id);
-  //   user.followers.push(userDetail);
-  //   await user.save();
-  //   return user;
-  // }
-
-  // async unfollowUser(currentUser: User, username: string) {
-  //   const user = await this.userRepository.findOne({
-  //     where: { username },
-  //     relations: ['followers'],
-  //   });
-  //   user.followers.filter((followers) => followers != currentUser);
-  //   await user.save();
-  //   return user;
-  // }
+  async logout(logout: LogoutDto) {
+    const user = await this.findByEmail(logout);
+    user.refeshToken = '0';
+    await user.save();
+  }
   async unfavorite(articleId: number, user: User) {
     const user_Ar = await this.userRepository.findOne({
       where: { id: user.id },

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
-import {  Exclude } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import { Articles } from 'src/articles/entities/article.entity';
 import { Favorite } from 'src/favorite/favorite.entity';
 import { Comments } from 'src/comments/entities/comment.entity';
@@ -23,7 +23,7 @@ export class User extends BaseEntity {
   email: string;
 
   @ApiProperty({ description: 'username' })
-  @Column()
+  @Column({ default: false })
   username: string;
 
   @ApiProperty({ description: 'Hashed user password' })
