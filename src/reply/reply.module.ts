@@ -1,12 +1,10 @@
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Reply } from './entities/reply.entity';
 import { Module } from '@nestjs/common';
 import { ReplyService } from './reply.service';
 import { CommentsModule } from 'src/comments/comments.module';
-import { ReplyController } from './reply.comtroller';
+import { ReplyController } from './reply.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reply]), CommentsModule],
+  imports: [CommentsModule],
   controllers: [ReplyController],
   providers: [ReplyService],
   exports: [ReplyService],

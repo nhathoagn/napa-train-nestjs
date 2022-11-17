@@ -16,24 +16,24 @@ export class AuthService {
   constructor(
     private jwt: JwtService,
     private config: ConfigService,
-    private UserService: UserService,
+    private userService: UserService,
   ) {}
   async signup(dto: AuthDto) {
     const hash = await argon.hash(dto.password);
     try {
-      const userExit = await this.UserService.findByEmail({ email: dto.email });
+      const userExit = await this.userService.findByEmail({ email: dto.email });
 
       if (userExit) {
         throw new BadRequestException('Email exits');
       }
-      const user = this.UserService.create({ ...dto, password: hash });
+      const user = this.userService.create({ ...dto, password: hash });
       return user;
     } catch (error) {
       throw new ForbiddenException('Credentials taken');
     }
   }
   async signin(dto: AuthDto) {
-    const userExit = await this.UserService.findByEmail({ email: dto.email });
+    const userExit = await this.userService.findByEmail({ email: dto.email });
     const userPassword = userExit.password;
     if (!userExit) {
       throw new ForbiddenException('Credentials taken');
@@ -54,7 +54,7 @@ export class AuthService {
     return token;
   }
   async logout(logout: LogoutDto) {
-    await this.UserService.logout(logout);
+    await this.userService.logout(logout);
     return { msg: 'logout' };
   }
   async signToken(
@@ -83,12 +83,12 @@ export class AuthService {
   }
   async updateRefeshToken(updateRTDto: RefeshToken) {
     const hashedRefreshToken = await argon.hash(updateRTDto.refeshToken);
-    await this.UserService.update(updateRTDto.userId, {
+    await this.userService.update(updateRTDto.userId, {
       refeshToken: hashedRefreshToken,
     });
   }
   async validateUser(dto: AuthDto) {
-    const user = await this.UserService.findByEmail({ email: dto.email });
+    const user = await this.userService.findByEmail({ email: dto.email });
     if (!user) {
       return null;
     }

@@ -1,4 +1,4 @@
-import { Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { InfoArticle } from 'src/articles/dto/info-article.dto';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
@@ -14,17 +14,17 @@ import { FavoriteService } from './favorite.service';
 @Controller()
 export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
-  @Post('favorite/:articleId')
+  @Post('favorite')
   async favoriteArticle(
-    @Param() params: InfoArticle,
+    @Body() params: InfoArticle,
     @CurrentUser() user: User,
   ) {
     return await this.favoriteService.favoriteArticle(params, user);
   }
 
-  @Post('unfavorite/:articleId')
+  @Delete('unfavorite')
   async unfavoriteArticle(
-    @Param() articleId: InfoArticle,
+    @Body() articleId: InfoArticle,
     @CurrentUser() user: User,
   ) {
     return await this.favoriteService.unfavoriteArticle(articleId, user);

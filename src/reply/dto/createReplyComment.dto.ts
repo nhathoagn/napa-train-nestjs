@@ -3,11 +3,17 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { BaseEntity } from 'typeorm';
 
-export class CreateCommentDto extends BaseEntity {
+export class ReplyCommentDto extends BaseEntity {
   @ApiProperty({ description: 'comments' })
   @IsNotEmpty()
   @IsString()
+  @Type(() => String)
   content: string;
+
+  @ApiProperty({ description: 'comments' })
+  @IsOptional()
+  @Type(() => Number)
+  commentId: number;
 
   @ApiProperty({ description: 'articleId' })
   @IsOptional()

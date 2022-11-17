@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -11,6 +11,7 @@ import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { User } from 'src/user/entities/user.entity';
 import { CommentsService } from './comments.service';
+import { CommentsDTO } from './dto/comment.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
 @ApiBearerAuth()
@@ -19,16 +20,19 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentsService) {}
-  @Post(':articleId')
-  createComment(
-    @CurrentUser() user: User,
-    @Body() comments: CreateCommentDto,
-    @Param('articleId') articleId: number,
-  ) {
-    return this.commentService.create(user, comments, articleId);
+
+  @Post()
+  createComment(@CurrentUser() user: User, @Body() comments: CreateCommentDto) {
+    return this.commentService.create(user, comments);
   }
-  @Delete(':articleId')
-  removeComment(@CurrentUser() user: User, @Param('id') id: number) {
-    return this.commentService.remove(user, id);
+
+  @Delete()
+  removeComment(@CurrentUser() user: User, @Body() comments: CommentsDTO) {
+    return this.commentService.remove(user, comments);
+  }
+
+  @Patch()
+  editComment(@CurrentUser() user: User, @Body() comments: CommentsDTO) {
+    return this.commentService.editComment(user, comments);
   }
 }

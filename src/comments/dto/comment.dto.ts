@@ -1,10 +1,23 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { BaseEntity } from 'typeorm';
 
 export class CommentsDTO extends BaseEntity {
-  @IsNotEmpty()
+  @ApiProperty({ description: 'commentId' })
+  @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  id: number;
+  commentId: number;
+
+  @ApiProperty({ description: 'articleId' })
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  articleId: number;
+
+  @ApiProperty({ description: 'comments' })
+  @IsNotEmpty()
+  @IsString()
+  content: string;
 }

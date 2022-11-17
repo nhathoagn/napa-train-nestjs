@@ -4,6 +4,7 @@ import { ArticlesService } from 'src/articles/articles.service';
 import { ReplyDto } from 'src/reply/dto/reply.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { CommentsDTO } from './dto/comment.dto';
 
 import { CreateCommentDto } from './dto/create-comment.dto';
 
@@ -17,7 +18,8 @@ export class CommentsService {
     @Inject(forwardRef(() => ArticlesService))
     private articleService: ArticlesService,
   ) {}
-  async create(user: User, comments: CreateCommentDto, articleId: number) {
+  async create(user: User, comments: CreateCommentDto) {
+    const articleId = comments.articleId;
     const article = await this.articleService.findArticle(articleId);
     const createComment = this.commentRepository.create({
       ...comments,
@@ -25,12 +27,16 @@ export class CommentsService {
       articles: article,
     });
     await createComment.save();
-    return { msg: 'comments success' };
+    await this.commentRepository.update(createComment.id, {
+      parent: createComment,
+    });
+
+    return createComment;
   }
 
-  async remove(user: User, commentid: number) {
+  async remove(user: User, comments: CommentsDTO) {
     const comment = await this.commentRepository.findOne({
-      where: { id: commentid },
+      where: { id: comments.commentId },
       relations: ['author'],
     });
     await comment.remove();
@@ -40,8 +46,25 @@ export class CommentsService {
   async findComment(commentId: ReplyDto) {
     const comment = await this.commentRepository.findOne({
       where: { id: commentId.commentId },
-      relations: ['author'],
+      relations: ['author', 'children', 'parent'],
     });
+    return comment;
+  }
+
+  async findOne(commentId: ReplyDto) {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId.commentId },
+      relations: ['children', 'author', 'articles'],
+    });
+    return comment;
+  }
+
+  async editComment(user: User, comments: CommentsDTO) {
+    const comment = await this.findComment(comments);
+    if (user.id == comment.author.id) {
+      comment.content = comments.content;
+      await comment.save();
+    }
     return comment;
   }
 }

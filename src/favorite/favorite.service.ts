@@ -38,7 +38,7 @@ export class FavoriteService {
       user: user,
     });
     await this.favoriteRepository.save(favorite);
-    return { msg: 'success' };
+    return article;
   }
   async unfavoriteArticle(article: InfoArticle, user: User) {
     const articleId = article.articleId;

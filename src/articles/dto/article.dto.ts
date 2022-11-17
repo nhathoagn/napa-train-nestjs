@@ -10,7 +10,7 @@ export class ArticleDto {
   @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)
-  page: number = 1;
+  page = 1;
 
   @ApiProperty({
     description: 'limit',
@@ -19,5 +19,5 @@ export class ArticleDto {
   @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)
-  limit: number = 10;
+  limit = 10;
 }
