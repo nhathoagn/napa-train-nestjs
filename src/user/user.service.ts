@@ -68,7 +68,7 @@ export class UserService {
   }
   async logout(logout: LogoutDto) {
     const user = await this.findByEmail(logout);
-    user.refeshToken = '0';
+    user.refeshToken = null;
     await user.save();
   }
   async unfavorite(articleId: number, user: User) {

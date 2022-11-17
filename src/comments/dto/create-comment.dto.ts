@@ -14,4 +14,10 @@ export class CreateCommentDto extends BaseEntity {
   @IsNumber()
   @Type(() => Number)
   articleId: number;
+
+  @ApiProperty({ description: 'articleId' })
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  commentId: number;
 }

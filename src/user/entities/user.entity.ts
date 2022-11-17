@@ -44,7 +44,7 @@ export class User extends BaseEntity {
   address: string;
 
   @ApiProperty({ description: 'refeshToken' })
-  @Column({ default: false })
+  @Column({ default: false, nullable: true })
   @Exclude()
   refeshToken: string;
 

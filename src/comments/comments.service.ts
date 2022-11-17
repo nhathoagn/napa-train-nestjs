@@ -20,17 +20,17 @@ export class CommentsService {
   ) {}
   async create(user: User, comments: CreateCommentDto) {
     const articleId = comments.articleId;
+    let commented = null;
     const article = await this.articleService.findArticle(articleId);
-    const createComment = this.commentRepository.create({
+    if (comments.commentId) {
+      commented = await this.findComment(comments);
+    }
+    const createComment = await this.commentRepository.save({
       ...comments,
       author: user,
       articles: article,
+      parent: commented,
     });
-    await createComment.save();
-    await this.commentRepository.update(createComment.id, {
-      parent: createComment,
-    });
-
     return createComment;
   }
 
@@ -46,7 +46,7 @@ export class CommentsService {
   async findComment(commentId: ReplyDto) {
     const comment = await this.commentRepository.findOne({
       where: { id: commentId.commentId },
-      relations: ['author', 'children', 'parent'],
+      relations: ['children', 'author', 'articles'],
     });
     return comment;
   }
