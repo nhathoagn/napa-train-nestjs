@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LogoutDto } from 'src/auth/dto/logout.dto';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { InfoUserDto } from './dto/info-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
@@ -21,10 +22,16 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async findProfile(id: number) {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      relations: ['followers', 'articles', 'favorites', 'followee'],
+  async findProfile(userId: InfoUserDto) {
+    const user = this.userRepository.findOne({
+      where: { id: userId.userId },
+      select: {
+        username: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+      },
+      // relations: ['followers', 'articles'],
     });
     return user;
   }
@@ -76,9 +83,6 @@ export class UserService {
       where: { id: user.id },
       relations: ['favorites'],
     });
-    console.log('user_Ar', user_Ar);
-
-    // await this.userRepository.remove(user_Ar);
     return { msg: 'infavorite success' };
   }
 }

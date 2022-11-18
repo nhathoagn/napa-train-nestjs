@@ -31,7 +31,7 @@ export class Articles extends BaseEntity {
   @ManyToOne(() => User, (user) => user.favorites)
   favoritesBy: User;
 
-  @OneToMany(() => Comments, (comments) => comments.articles)
+  @OneToMany(() => Comments, (comments) => comments.article)
   comments: Comments[];
 
   @OneToMany(() => Favorite, (favorite) => favorite.articles)

@@ -16,6 +16,7 @@ import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { User } from './entities/user.entity';
 import { FollowService } from 'src/follow/follow.service';
+import { InfoUserDto } from './dto/info-user.dto';
 @ApiBearerAuth()
 @ApiTags('User')
 @UseGuards(JwtAuthGuard)
@@ -33,8 +34,8 @@ export class UserController {
   }
 
   @Get('/me')
-  async getInfo(@CurrentUser() id: number) {
-    const profile = await this.userService.findProfile(id);
+  async getInfo(@CurrentUser() userId: InfoUserDto) {
+    const profile = await this.userService.findProfile(userId);
     return profile;
   }
 

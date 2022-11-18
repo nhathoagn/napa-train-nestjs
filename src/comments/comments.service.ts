@@ -18,19 +18,20 @@ export class CommentsService {
     @Inject(forwardRef(() => ArticlesService))
     private articleService: ArticlesService,
   ) {}
-  async create(user: User, comments: CreateCommentDto) {
-    const articleId = comments.articleId;
+  async create(user: User, comment: CreateCommentDto) {
+    const articleId = comment.articleId;
     let commented = null;
     const article = await this.articleService.findArticle(articleId);
-    if (comments.commentId) {
-      commented = await this.findComment(comments);
+    if (comment.commentId) {
+      commented = await this.findComment(comment);
     }
     const createComment = await this.commentRepository.save({
-      ...comments,
+      ...comment,
       author: user,
       articles: article,
       parent: commented,
     });
+    // await article.comments.push(createComment);
     return createComment;
   }
 
@@ -40,7 +41,7 @@ export class CommentsService {
       relations: ['author'],
     });
     await comment.remove();
-    return comment;
+    return { msg: 'delete success' };
   }
 
   async findComment(commentId: ReplyDto) {

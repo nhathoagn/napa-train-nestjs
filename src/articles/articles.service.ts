@@ -5,7 +5,8 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { InfoUser } from 'src/user/dto/info-user.dto';
+import { InfoUserDto } from 'src/user/dto/info-user.dto';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { InfoArticle } from './dto/info-article.dto';
@@ -17,11 +18,13 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Articles)
     private articlesRepository: Repository<Articles>,
+    private userService: UserService,
   ) {}
-  create(createArticleDto: CreateArticleDto, user: InfoUser) {
+  async create(createArticleDto: CreateArticleDto, user: InfoUserDto) {
+    const currentUser = await this.userService.findByEmail(user);
     const article = this.articlesRepository.create({
       ...createArticleDto,
-      user,
+      user: currentUser,
     });
     return this.articlesRepository.save(article);
   }

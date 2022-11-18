@@ -17,7 +17,7 @@ export class CommentsDTO extends BaseEntity {
   articleId: number;
 
   @ApiProperty({ description: 'comments' })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   content: string;
 }

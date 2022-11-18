@@ -35,7 +35,7 @@ export class Comments extends BaseEntity {
   updatedAt!: Date;
 
   @ManyToOne(() => Articles, (articles) => articles.comments)
-  articles: Articles;
+  article: Articles;
 
   @ManyToOne(() => User, (user) => user.comments)
   author: User;

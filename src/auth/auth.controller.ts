@@ -9,7 +9,7 @@ import {
 import { User } from 'src/user/entities/user.entity';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { CurrentUser } from './decorator/current-user.decorator';
-import { InfoUser } from 'src/user/dto/info-user.dto';
+import { InfoUserDto } from 'src/user/dto/info-user.dto';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -38,7 +38,7 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'error. Try again!' })
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@CurrentUser() user: InfoUser) {
+  async logout(@CurrentUser() user: InfoUserDto) {
     this.authService.logout(user);
     return {
       msg: 'log success',
