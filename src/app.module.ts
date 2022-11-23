@@ -6,6 +6,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { User } from './typeorm/entities/User';
+import { StorageModule } from './storage/storage.module';
+import { MediaModule } from './media/media.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -21,7 +24,12 @@ import { User } from './typeorm/entities/User';
       entities: [User],
       synchronize: true,
     }),
-    PassportModule.register({session: true})
+    PassportModule.register({ session: true }),
+    StorageModule,
+    MediaModule,
+    MulterModule.register({
+      dest: './uploads',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
