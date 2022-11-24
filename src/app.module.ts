@@ -9,9 +9,12 @@ import { User } from './typeorm/entities/User';
 import { StorageModule } from './storage/storage.module';
 import { MediaModule } from './media/media.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { Media } from './media/entity/media.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     CloudinaryModule,
     AuthModule,
     TypeOrmModule.forRoot({
@@ -21,7 +24,7 @@ import { MulterModule } from '@nestjs/platform-express';
       username: 'root',
       password: 'password',
       database: 'google_oauth2_app',
-      entities: [User],
+      entities: [User, Media],
       synchronize: true,
     }),
     PassportModule.register({ session: true }),

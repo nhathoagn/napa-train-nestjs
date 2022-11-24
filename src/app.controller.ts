@@ -6,7 +6,7 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AppService } from './app.service';
@@ -19,11 +19,11 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-  // @Post('upload')
-  // @UseInterceptors(FileInterceptor('file'))
-  // uploadImage(@UploadedFile() file: Express.Multer.File) {
-  //   return this.appService.uploadImageToCloudinary(file);
-  // }
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return this.appService.uploadImageToCloudinary(file);
+  }
   // @Post('/file')
   // @UseInterceptors(
   //   FileInterceptor('file', {
@@ -43,11 +43,11 @@ export class AppController {
   //   console.log('file', file);
   //   return 'File upload APi';
   // }
-  @Post('post_file')
-  @UseInterceptors(FileInterceptor('file'))
-  postImage(@UploadedFiles() file: Array<Express.Multer.File>): object {
-    console.log(file);
+  // @Post('post_file')
+  // @UseInterceptors(AnyFilesInterceptor())
+  // postImage(@UploadedFiles() file: Array<Express.Multer.File>): object {
+  //   console.log(file);
 
-    return { msg: 'file uploaded' };
-  }
+  //   return { msg: 'file uploaded' };
+  // }
 }
