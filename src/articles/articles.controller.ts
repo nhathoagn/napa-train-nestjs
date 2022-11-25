@@ -20,6 +20,9 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { FilterArticlesDto } from './dto/article.dto';
+import { PaginationDTO } from './dto/pagination.dto';
+import { PageOptionsDto } from './dto/page-options.dto';
+import { PageDto } from './dto/page.dto copy';
 @ApiBearerAuth()
 @ApiTags('articles')
 @UseGuards(JwtAuthGuard)
@@ -44,6 +47,14 @@ export class ArticlesController {
       page: filter.page,
     };
     return await this.articlesService.paginate(options);
+  }
+
+  @Get('all')
+  async getAll(
+    @Query() pagiantion: PageOptionsDto,
+  ): Promise<PageDto<CreateArticleDto>> {
+    console.log(pagiantion);
+    return this.articlesService.getAll(pagiantion);
   }
 
   @Get(':id')
