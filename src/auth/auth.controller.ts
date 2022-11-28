@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Res,
-  UseGuards,
-  Req,
-  Get,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import {
@@ -15,13 +7,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
-import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { CurrentUser } from './decorator/current-user.decorator';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { InfoUser } from 'src/user/dto/info-user.dto';
-import { get } from 'http';
+import { InfoUserDto } from 'src/user/dto/info-user.dto';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -33,7 +21,7 @@ export class AuthController {
   })
   @ApiBadRequestResponse({ description: 'User cannot register. Try again!' })
   @Post('/signup')
-  signup(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
+  signup(@Body() dto: AuthDto) {
     return this.authService.signup(dto);
   }
   @ApiCreatedResponse({
@@ -44,15 +32,13 @@ export class AuthController {
   @Post('signin')
   async signin(@Body() dto: AuthDto) {
     const token = await this.authService.signin(dto);
-    console.log('return token', token);
 
-    return { msg: 'signin success' };
+    return { token: token, msg: 'signin success' };
   }
   @ApiBadRequestResponse({ description: 'error. Try again!' })
   @UseGuards(JwtAuthGuard)
-  @Get('logout')
-  async logout(@CurrentUser() user: InfoUser) {
-    console.log('req', user);
+  @Post('logout')
+  async logout(@CurrentUser() user: InfoUserDto) {
     this.authService.logout(user);
     return {
       msg: 'log success',

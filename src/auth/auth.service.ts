@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon from 'argon2';
 import { CreateTokenDto } from './dto/create-token.dto';
-import { response } from 'express';
 import { UserService } from '../user/user.service';
 import { RefeshToken } from './dto/refeshToken.dto';
 import { LogoutDto } from './dto/logout.dto';
@@ -17,24 +16,24 @@ export class AuthService {
   constructor(
     private jwt: JwtService,
     private config: ConfigService,
-    private UserService: UserService,
+    private userService: UserService,
   ) {}
   async signup(dto: AuthDto) {
     const hash = await argon.hash(dto.password);
     try {
-      const userExit = await this.UserService.findByEmail({ email: dto.email });
+      const userExit = await this.userService.findByEmail({ email: dto.email });
 
       if (userExit) {
         throw new BadRequestException('Email exits');
       }
-      const user = this.UserService.create({ ...dto, password: hash });
+      const user = this.userService.create({ ...dto, password: hash });
       return user;
     } catch (error) {
       throw new ForbiddenException('Credentials taken');
     }
   }
   async signin(dto: AuthDto) {
-    const userExit = await this.UserService.findByEmail({ email: dto.email });
+    const userExit = await this.userService.findByEmail({ email: dto.email });
     const userPassword = userExit.password;
     if (!userExit) {
       throw new ForbiddenException('Credentials taken');
@@ -43,10 +42,10 @@ export class AuthService {
     if (!isMatch) {
       throw new ForbiddenException('Credentials taken');
     }
-
     const token = await this.signToken({
       userId: userExit.id.toString(),
       email: userExit.email,
+      username: userExit.username,
     });
     await this.updateRefeshToken({
       userId: userExit.id,
@@ -55,9 +54,8 @@ export class AuthService {
     return token;
   }
   async logout(logout: LogoutDto) {
-    this.UserService.update(logout.userId, {
-      refeshToken: '',
-    });
+    await this.userService.logout(logout);
+    return { msg: 'logout' };
   }
   async signToken(
     tokenDto: CreateTokenDto,
@@ -65,6 +63,7 @@ export class AuthService {
     const payload = {
       id: tokenDto.userId,
       email: tokenDto.email,
+      username: tokenDto.username,
     };
     const secretKey = this.config.get('JWT_SECRET');
     const refeshKey = this.config.get('JWT_REFRESH_SECRET');
@@ -84,12 +83,12 @@ export class AuthService {
   }
   async updateRefeshToken(updateRTDto: RefeshToken) {
     const hashedRefreshToken = await argon.hash(updateRTDto.refeshToken);
-    await this.UserService.update(updateRTDto.userId, {
+    await this.userService.update(updateRTDto.userId, {
       refeshToken: hashedRefreshToken,
     });
   }
   async validateUser(dto: AuthDto) {
-    const user = await this.UserService.findByEmail({ email: dto.email });
+    const user = await this.userService.findByEmail({ email: dto.email });
     if (!user) {
       return null;
     }

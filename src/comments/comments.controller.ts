@@ -1,51 +1,38 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Patch,
+  Post,
   UseGuards,
-  ParseIntPipe,
 } from '@nestjs/common';
-import { InfoArticle } from 'src/articles/dto/info-article.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { User } from 'src/user/entities/user.entity';
 import { CommentsService } from './comments.service';
+import { CommentsDTO } from './dto/comment.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+
+@ApiBearerAuth()
+@ApiTags('comments')
 @UseGuards(JwtAuthGuard)
-@Controller('/article/')
-export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+@Controller('comment')
+export class CommentController {
+  constructor(private readonly commentService: CommentsService) {}
 
-  @Post('/:id/comment')
-  create(
-    @Body() createCommentDto: CreateCommentDto,
-    @Param('id') idArticle: number,
-  ) {
-    console.log('req', createCommentDto, idArticle);
-
-    return this.commentsService.create(createCommentDto, idArticle);
+  @Post()
+  createComment(@CurrentUser() user: User, @Body() comments: CreateCommentDto) {
+    return this.commentService.create(user, comments);
   }
 
-  @Get()
-  findAll() {
-    return this.commentsService.findAll();
+  @Delete()
+  removeComment(@CurrentUser() user: User, @Body() comments: CommentsDTO) {
+    return this.commentService.remove(user, comments);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentsService.update(+id, updateCommentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentsService.remove(+id);
+  @Patch()
+  editComment(@CurrentUser() user: User, @Body() comments: CommentsDTO) {
+    return this.commentService.editComment(user, comments);
   }
 }

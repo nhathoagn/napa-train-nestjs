@@ -1,36 +1,71 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { InfoArticle } from 'src/articles/dto/info-article.dto';
+import { ArticlesService } from 'src/articles/articles.service';
+import { ReplyDto } from 'src/reply/dto/reply.dto';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { CommentsDTO } from './dto/comment.dto';
+
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+
 import { Comments } from './entities/comment.entity';
 
 @Injectable()
 export class CommentsService {
-  @InjectRepository(Comments) private commentRepository: Repository<Comments>;
-  create(createCommentDto: CreateCommentDto, idArticle: number) {
-    // const comment = this.commentRepository.create({
-    //   ...createCommentDto,
-    //   idArticle,
-    // });
-    // return this.commentRepository.save(comment);
-    return 0;
+  constructor(
+    @InjectRepository(Comments)
+    private commentRepository: Repository<Comments>,
+    @Inject(forwardRef(() => ArticlesService))
+    private articleService: ArticlesService,
+  ) {}
+  async create(user: User, comment: CreateCommentDto) {
+    const articleId = comment.articleId;
+    let commented = null;
+    const article = await this.articleService.findArticle(articleId);
+    if (comment.commentId) {
+      commented = await this.findComment(comment);
+    }
+    const createComment = await this.commentRepository.save({
+      ...comment,
+      author: user,
+      articles: article,
+      parent: commented,
+    });
+    // await article.comments.push(createComment);
+    return createComment;
   }
 
-  findAll() {
-    return `This action returns all comments`;
+  async remove(user: User, comments: CommentsDTO) {
+    const comment = await this.commentRepository.findOne({
+      where: { id: comments.commentId },
+      relations: ['author'],
+    });
+    await comment.remove();
+    return { msg: 'delete success' };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  async findComment(commentId: ReplyDto) {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId.commentId },
+      relations: ['children', 'author', 'articles'],
+    });
+    return comment;
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async findOne(commentId: ReplyDto) {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId.commentId },
+      relations: ['children', 'author', 'articles'],
+    });
+    return comment;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async editComment(user: User, comments: CommentsDTO) {
+    const comment = await this.findComment(comments);
+    if (user.id == comment.author.id) {
+      comment.content = comments.content;
+      await comment.save();
+    }
+    return comment;
   }
 }

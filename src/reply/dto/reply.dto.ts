@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
-export class InfoArticle {
+export class ReplyDto {
   @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)
-  articleId: number;
+  commentId: number;
 }
