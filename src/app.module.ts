@@ -10,6 +10,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ArticlesModule } from './articles/articles.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ReplyModule } from './reply/reply.module';
+import { EventsGateway } from './chat/events/events.gateway';
+import { GatewayController } from './gateway/gateway.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
@@ -22,8 +24,9 @@ import { ReplyModule } from './reply/reply.module';
     ArticlesModule,
     FavoriteModule,
     ReplyModule,
+    EventsGateway,
   ],
-  controllers: [AppController],
+  controllers: [AppController, GatewayController],
   providers: [AppService],
 })
 export class AppModule {}

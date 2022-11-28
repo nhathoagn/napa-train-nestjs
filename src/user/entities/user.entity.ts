@@ -12,6 +12,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Follow } from 'src/follow/follow.entity';
+import { MessageEntity } from 'src/message/entity/message.entity';
+import { JoinedRoomEntity } from 'src/rooms/entity/joinRoom.entity';
+import { Participant } from 'src/room_user/room_user.entity';
 @Entity('user')
 export class User extends BaseEntity {
   @ApiProperty({ description: 'Primary key as User ID', example: 1 })
@@ -64,4 +67,13 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Favorite, (favorite) => favorite.user)
   favorites: Favorite[];
+
+  @OneToMany(() => MessageEntity, (mess) => mess.user)
+  message: MessageEntity[];
+
+  @OneToMany(() => JoinedRoomEntity, (joinedRooms) => joinedRooms.room)
+  joinedRooms: JoinedRoomEntity[];
+
+  @OneToMany(() => Participant, (participant) => participant.users)
+  participant: Participant[];
 }
