@@ -1,12 +1,11 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class RoomDataDTO {
+export class RoomDTO {
+  @IsOptional()
   @IsNumber()
   roomId: number;
 
-  @IsString()
-  name: string;
-
   @IsOptional()
-  description: string;
+  @IsString()
+  userId: string;
 }

@@ -6,10 +6,11 @@ import { User } from './entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { FollowModule } from 'src/follow/follow.module';
+import { MessageEntity } from 'src/message/entity/message.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, MessageEntity]),
     PassportModule,
     forwardRef(() => FollowModule),
   ],

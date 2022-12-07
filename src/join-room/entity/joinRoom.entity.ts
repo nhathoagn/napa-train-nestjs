@@ -1,6 +1,6 @@
 import { User } from 'src/user/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { RoomEntity } from './room.entity';
+import { RoomEntity } from '../../rooms/entity/room.entity';
 
 @Entity()
 export class JoinedRoomEntity {

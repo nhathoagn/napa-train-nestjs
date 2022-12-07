@@ -18,6 +18,7 @@ export class AuthService {
     private config: ConfigService,
     private userService: UserService,
   ) {}
+
   async signup(dto: AuthDto) {
     const hash = await argon.hash(dto.password);
     try {
@@ -32,6 +33,7 @@ export class AuthService {
       throw new ForbiddenException('Credentials taken');
     }
   }
+
   async signin(dto: AuthDto) {
     const userExit = await this.userService.findByEmail({ email: dto.email });
     const userPassword = userExit.password;
@@ -53,10 +55,12 @@ export class AuthService {
     });
     return token;
   }
+
   async logout(logout: LogoutDto) {
     await this.userService.logout(logout);
     return { msg: 'logout' };
   }
+
   async signToken(
     tokenDto: CreateTokenDto,
   ): Promise<{ access_token: string; refeshToken: string }> {
@@ -69,7 +73,8 @@ export class AuthService {
     const refeshKey = this.config.get('JWT_REFRESH_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '15m',
+      // expiresIn: '15m',
+      expiresIn: '1d',
       secret: secretKey,
     });
     const refeshToken = await this.jwt.signAsync(payload, {
@@ -81,12 +86,14 @@ export class AuthService {
       refeshToken: refeshToken,
     };
   }
+
   async updateRefeshToken(updateRTDto: RefeshToken) {
     const hashedRefreshToken = await argon.hash(updateRTDto.refeshToken);
     await this.userService.update(updateRTDto.userId, {
       refeshToken: hashedRefreshToken,
     });
   }
+
   async validateUser(dto: AuthDto) {
     const user = await this.userService.findByEmail({ email: dto.email });
     if (!user) {

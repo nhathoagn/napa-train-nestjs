@@ -1,12 +1,6 @@
 import { RoomEntity } from 'src/rooms/entity/room.entity';
 import { User } from 'src/user/entities/user.entity';
-import {
-  Entity,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Participant {
@@ -14,8 +8,8 @@ export class Participant {
   id: number;
 
   @ManyToOne(() => User, (user) => user.participant)
-  users: User;
+  user: User;
 
   @ManyToOne(() => RoomEntity, (room) => room.participant)
-  rooms: RoomEntity;
+  room: RoomEntity;
 }

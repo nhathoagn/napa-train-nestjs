@@ -4,17 +4,21 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
+@Entity()
 export class MessageEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   text: string;
+
+  @Column({ default: false })
+  media: string;
 
   @ManyToOne(() => User, (user) => user.message)
   user: User;

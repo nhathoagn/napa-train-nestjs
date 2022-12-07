@@ -8,8 +8,6 @@ import {
   Delete,
   UseGuards,
   Query,
-  DefaultValuePipe,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
@@ -20,7 +18,6 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { FilterArticlesDto } from './dto/article.dto';
-import { PaginationDTO } from './dto/pagination.dto';
 import { PageOptionsDto } from './dto/page-options.dto';
 import { PageDto } from './dto/page.dto copy';
 @ApiBearerAuth()
@@ -53,7 +50,6 @@ export class ArticlesController {
   async getAll(
     @Query() pagiantion: PageOptionsDto,
   ): Promise<PageDto<CreateArticleDto>> {
-    console.log(pagiantion);
     return this.articlesService.getAll(pagiantion);
   }
 

@@ -13,8 +13,9 @@ import {
 } from 'typeorm';
 import { Follow } from 'src/follow/follow.entity';
 import { MessageEntity } from 'src/message/entity/message.entity';
-import { JoinedRoomEntity } from 'src/rooms/entity/joinRoom.entity';
+import { JoinedRoomEntity } from 'src/join-room/entity/joinRoom.entity';
 import { Participant } from 'src/room_user/room_user.entity';
+import { ConnectedUserEntity } from 'src/connected_user/connected_user.entity';
 @Entity('user')
 export class User extends BaseEntity {
   @ApiProperty({ description: 'Primary key as User ID', example: 1 })
@@ -74,6 +75,9 @@ export class User extends BaseEntity {
   @OneToMany(() => JoinedRoomEntity, (joinedRooms) => joinedRooms.room)
   joinedRooms: JoinedRoomEntity[];
 
-  @OneToMany(() => Participant, (participant) => participant.users)
+  @OneToMany(() => Participant, (participant) => participant.user)
   participant: Participant[];
+
+  @OneToMany(() => ConnectedUserEntity, (connected) => connected.user)
+  connections: ConnectedUserEntity[];
 }

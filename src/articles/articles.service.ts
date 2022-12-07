@@ -12,7 +12,6 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { InfoArticle } from './dto/info-article.dto';
 import { PageOptionsDto } from './dto/page-options.dto';
 import { PageDto } from './dto/page.dto copy';
-import { PaginationDTO } from './dto/pagination.dto';
 import { PageMetaDto } from './dto/pagination.meta';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Articles } from './entities/article.entity';

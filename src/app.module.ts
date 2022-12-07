@@ -10,8 +10,13 @@ import { ConfigModule } from '@nestjs/config';
 import { ArticlesModule } from './articles/articles.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ReplyModule } from './reply/reply.module';
-import { EventsGateway } from './chat/events/events.gateway';
-import { GatewayController } from './gateway/gateway.controller';
+import { GatewayModule } from './gateway/gateway.module';
+import { ConnectedUserModule } from './connected_user/connected_user.module';
+import { RoomsModule } from './rooms/rooms.module';
+import { RoomUserModule } from './room_user/room_user.module';
+import { JoinRoomModule } from './join-room/join-room.module';
+import { MessageModule } from './message/message.module';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
@@ -24,9 +29,14 @@ import { GatewayController } from './gateway/gateway.controller';
     ArticlesModule,
     FavoriteModule,
     ReplyModule,
-    EventsGateway,
+    GatewayModule,
+    ConnectedUserModule,
+    RoomsModule,
+    RoomUserModule,
+    JoinRoomModule,
+    MessageModule,
   ],
-  controllers: [AppController, GatewayController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
