@@ -1,5 +1,12 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { RoomEntity } from '../../rooms/entity/room.entity';
 
 @Entity()
@@ -15,4 +22,10 @@ export class JoinedRoomEntity {
 
   @ManyToOne(() => RoomEntity, (room) => room.joinedUser)
   room: RoomEntity;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }

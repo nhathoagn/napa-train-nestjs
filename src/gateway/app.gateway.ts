@@ -11,7 +11,6 @@ import { Server, Socket } from 'socket.io';
 import { ConnectedUserEntity } from 'src/connected_user/connected_user.entity';
 import { ConnectedUserService } from 'src/connected_user/connected_user.service';
 import { ParamsDTO } from 'src/join-room/dto/params.dto';
-import { JoinedRoomEntity } from 'src/join-room/entity/joinRoom.entity';
 import { JoinRoomService } from 'src/join-room/join-room.service';
 import { CreatedMessageDTO } from 'src/message/dto/createMessage.dto';
 import { MessageService } from 'src/message/message.service';
@@ -43,25 +42,25 @@ export class GateWay implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleConnection(socket: Socket) {
-    try {
-      const decodeToken = this.jwtService.decode(
-        socket.handshake.headers.authorization,
-      );
-      let user: User;
-      if (decodeToken !== null) {
-        const userId = decodeToken as TokenDTO;
-        user = await this.userService.findOne(userId.id);
-      }
-      if (!user) {
-        return this.gatewayService.disconnect(socket);
-      }
-      socket.data.user = user;
-      const rooms = await this.roomUserService.getRoom(socket);
-      await this.connectedUserService.create({ socketId: socket.id, user });
-      return this.server.to(socket.id).emit('rooms', rooms);
-    } catch (e) {
-      console.log(e);
+    const decodeToken = this.jwtService.decode(
+      socket.handshake.headers.authorization,
+    );
+    let user: User;
+    if (decodeToken !== null) {
+      const userId = decodeToken as TokenDTO;
+      user = await this.userService.findOne(userId.id);
     }
+    if (!user) {
+      return this.gatewayService.disconnect(socket);
+    }
+    socket.data.user = user;
+    // const rooms  = await this.roomUserService.getRoom(socket);
+    const rooms = await this.joinedRoomUserService.paginateRoom(socket, {
+      page: 1,
+      take: 4,
+    });
+    await this.connectedUserService.create({ socketId: socket.id, user });
+    return this.server.to(socket.id).emit('rooms', rooms);
   }
 
   disconnect(socket: Socket) {

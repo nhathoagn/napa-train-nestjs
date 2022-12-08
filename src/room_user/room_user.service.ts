@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Socket } from 'socket.io';
-import { RoomDTO } from 'src/rooms/dto/room.dto';
 import { RoomDataDTO } from 'src/rooms/dto/roomData.dto';
 import { UserDTO } from 'src/user/dto/user.dto';
 import { Repository } from 'typeorm';
@@ -53,6 +52,7 @@ export class RoomUserService {
     //   userRooms.map((u) => u.rooms),
     // );
   }
+
   async findRoomMaster(roomId: number) {
     return await this.roomUserService
       .createQueryBuilder('roomUser')

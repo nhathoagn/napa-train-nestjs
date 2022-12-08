@@ -10,12 +10,12 @@ import { RoomEntity } from './entity/room.entity';
 export class RoomsService {
   constructor(
     @InjectRepository(RoomEntity)
-    private roomService: Repository<RoomEntity>,
+    private roomRepository: Repository<RoomEntity>,
     private roomUserService: RoomUserService,
   ) {}
 
   async createRoom(roomData: RoomDataDTO, creator: User) {
-    const createRoom = await this.roomService.save({
+    const createRoom = await this.roomRepository.save({
       ...roomData,
     });
     const participant = await this.roomUserService.create(createRoom, creator);
@@ -23,7 +23,7 @@ export class RoomsService {
   }
 
   async getRoom(roomId: number) {
-    return await this.roomService
+    return await this.roomRepository
       .createQueryBuilder('room')
       .where('room.id = :roomId', { roomId })
       .getOne();
