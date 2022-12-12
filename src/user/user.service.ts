@@ -43,6 +43,13 @@ export class UserService {
     return this.userRepository.findOneBy({ id });
   }
 
+  // findById(id: number) {
+  //   if (!id) {
+  //     return null;
+  //   }
+  //   return this.userRepository.findBy({ id });
+  // }
+
   findByEmail(createUserDto: CreateUserDto) {
     return this.userRepository.findOneBy({
       email: createUserDto.email,
@@ -79,7 +86,7 @@ export class UserService {
     await user.save();
   }
   async unfavorite(articleId: number, user: User) {
-    const user_Ar = await this.userRepository.findOne({
+    await this.userRepository.findOne({
       where: { id: user.id },
       relations: ['favorites'],
     });

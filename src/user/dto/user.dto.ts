@@ -6,20 +6,16 @@ import {
   IsString,
 } from 'class-validator';
 
-export class InfoUserDto {
-  @IsNotEmpty()
+export class UserDTO {
   @IsNumber()
-  userId: number;
+  @IsNotEmpty()
+  id: number;
 
-  @IsOptional()
-  @IsEmail()
-  email: string;
-
-  @IsOptional()
   @IsString()
+  @IsOptional()
   username: string;
 
+  @IsEmail()
   @IsOptional()
-  @IsNumber()
-  roomId: number;
+  email: string;
 }

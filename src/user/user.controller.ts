@@ -40,7 +40,10 @@ export class UserController {
   }
 
   @Post('/:username/follow')
-  async follow(@CurrentUser() user: User, @Param('username') username: string) {
+  async follow(
+    @CurrentUser() user: User,
+    @Param('username') username: InfoUserDto,
+  ) {
     const profile = this.followService.createFollow(user, username);
     return profile;
   }
@@ -48,7 +51,7 @@ export class UserController {
   @Post('/:username/unfollow')
   async unfollow(
     @CurrentUser() user: User,
-    @Param('username') username: string,
+    @Param('username') username: InfoUserDto,
   ) {
     return this.followService.removeFollow(user, username);
   }

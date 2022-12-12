@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InfoUserDto } from 'src/user/dto/info-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
@@ -17,7 +18,7 @@ export class FollowService {
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
   ) {}
-  async createFollow(currentUser: User, username: string) {
+  async createFollow(currentUser: User, { username }: InfoUserDto) {
     const user = await this.userService.findByUsername(username);
     const follow = this.followRepository.create({
       followers: currentUser,
@@ -37,8 +38,8 @@ export class FollowService {
       .execute();
     return query;
   }
-  async removeFollow(currentUser: User, user: string) {
-    const userId = await this.userService.findByUsername(user);
+  async removeFollow(currentUser: User, { username }: InfoUserDto) {
+    const userId = await this.userService.findByUsername(username);
     const favorite = await this.findFollow(currentUser, userId);
     if (!favorite) {
       throw new NotFoundException('user not found');

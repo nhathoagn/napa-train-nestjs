@@ -31,7 +31,6 @@ export class CommentsService {
       articles: article,
       parent: commented,
     });
-    // await article.comments.push(createComment);
     return createComment;
   }
 
