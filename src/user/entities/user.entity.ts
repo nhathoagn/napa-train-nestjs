@@ -13,8 +13,7 @@ import {
 } from 'typeorm';
 import { Follow } from 'src/follow/follow.entity';
 import { MessageEntity } from 'src/message/entity/message.entity';
-import { JoinedRoomEntity } from 'src/join-room/entity/joinRoom.entity';
-import { Participant } from 'src/room_user/room_user.entity';
+import { Participant } from 'src/room_user/entity/room_user.entity';
 import { ConnectedUserEntity } from 'src/connected_user/connected_user.entity';
 @Entity('user')
 export class User extends BaseEntity {
@@ -71,9 +70,6 @@ export class User extends BaseEntity {
 
   @OneToMany(() => MessageEntity, (mess) => mess.user)
   message: MessageEntity[];
-
-  @OneToMany(() => JoinedRoomEntity, (joinedRooms) => joinedRooms.room)
-  joinedRooms: JoinedRoomEntity[];
 
   @OneToMany(() => Participant, (participant) => participant.user)
   participant: Participant[];

@@ -10,8 +10,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ConnectedUserEntity } from 'src/connected_user/connected_user.entity';
 import { ConnectedUserService } from 'src/connected_user/connected_user.service';
-import { ParamsDTO } from 'src/join-room/dto/params.dto';
-import { JoinRoomService } from 'src/join-room/join-room.service';
 import { CreatedMessageDTO } from 'src/message/dto/createMessage.dto';
 import { MessageService } from 'src/message/message.service';
 import { RoomDTO } from 'src/rooms/dto/room.dto';
@@ -33,7 +31,6 @@ export class GateWay implements OnGatewayConnection, OnGatewayDisconnect {
     private connectedUserService: ConnectedUserService,
     private roomService: RoomsService,
     private roomUserService: RoomUserService,
-    private joinedRoomUserService: JoinRoomService,
     private messageService: MessageService,
   ) {}
   @WebSocketServer() server: Server;
@@ -54,8 +51,7 @@ export class GateWay implements OnGatewayConnection, OnGatewayDisconnect {
       return this.gatewayService.disconnect(socket);
     }
     socket.data.user = user;
-    // const rooms  = await this.roomUserService.getRoom(socket);
-    const rooms = await this.joinedRoomUserService.paginateRoom(socket, {
+    const rooms = await this.roomUserService.paginateRoom(socket, {
       page: 1,
       take: 4,
     });
@@ -70,10 +66,7 @@ export class GateWay implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('createRoom')
   async handleCreateRoom(socket: Socket, roomData: RoomDataDTO) {
-    const createRoom = await this.roomService.createRoom(
-      roomData,
-      socket.data.user,
-    );
+    const createRoom = await this.roomService.createRoom(roomData, socket);
     const user = createRoom.user;
     const connections: ConnectedUserEntity[] =
       await this.connectedUserService.findByUser(user);
@@ -83,28 +76,12 @@ export class GateWay implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage('joinRoom')
-  async handleJoinRoom(socket: Socket, { roomId }: ParamsDTO) {
-    const isRoomMaster = await this.roomUserService.findRoomMaster(roomId);
-    if (isRoomMaster.user.id == socket.data.user.id) {
-      const room = await this.roomService.getRoom(roomId);
-      await this.joinedRoomUserService.create({
-        socketId: socket.id,
-        user: socket.data.user,
-        room: room,
-      });
-    } else {
-      return { msg: 'You are not permitted to perform this action' };
-    }
-  }
-
   @SubscribeMessage('leaveRoom')
   async handleLeaveRoom(socket: Socket, { roomId, userId }: RoomDTO) {
-    const room = await this.joinedRoomUserService.findUserRoom(roomId, userId);
-    console.log(room);
+    const room = await this.roomUserService.findUserRoom(roomId, userId);
 
     if (room.length > 0) {
-      await this.joinedRoomUserService.deleteBySocketId(socket.id);
+      await this.roomUserService.deleteBySocketId(userId);
     } else {
       return { msg: 'User not in room' };
     }
@@ -112,10 +89,11 @@ export class GateWay implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('addMessage')
   async handleAddMessage(socket: Socket, message: CreatedMessageDTO) {
-    const userJoined = await this.joinedRoomUserService.findUserRoom(
+    const userJoined = await this.roomUserService.findUserRoom(
       message.roomId,
       socket.data.user.id,
     );
+
     if (userJoined.length > 0) {
       const room = await this.roomService.getRoom(message.roomId);
 
@@ -125,27 +103,24 @@ export class GateWay implements OnGatewayConnection, OnGatewayDisconnect {
         room,
       );
 
-      // const joinedUsers = await this.joinedRoomUserService.findByRoom(room.id);
       for (const user of userJoined) {
-        this.server.to(user.socketId).emit('messageAdded', createdMessage);
+        this.server.to(user.role).emit('messageAdded', createdMessage);
       }
     } else {
       return { msg: 'Room not found' };
-      // console.log({ msg: 'Room not found' });
     }
   }
 
   @SubscribeMessage('addUser')
   async handleAddUser(socket: Socket, { roomId, username }: InfoUserDto) {
     const isRoomMaster = await this.roomUserService.findRoomMaster(roomId);
+
     if (isRoomMaster.user.id == socket.data.user.id) {
       const user = await this.userService.findByUsername(username);
+
       const room = await this.roomService.getRoom(roomId);
-      await this.joinedRoomUserService.create({
-        socketId: socket.id,
-        user: user,
-        room: room,
-      });
+
+      await this.roomUserService.addUser(room, user);
     } else {
       return { msg: 'You are not permitted to perform this action' };
     }

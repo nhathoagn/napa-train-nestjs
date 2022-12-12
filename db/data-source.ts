@@ -6,8 +6,7 @@ import { Favorite } from 'src/favorite/favorite.entity';
 import { Follow } from 'src/follow/follow.entity';
 import { MessageEntity } from 'src/message/entity/message.entity';
 import { RoomEntity } from 'src/rooms/entity/room.entity';
-import { JoinedRoomEntity } from 'src/join-room/entity/joinRoom.entity';
-import { Participant } from 'src/room_user/room_user.entity';
+import { Participant } from 'src/room_user/entity/room_user.entity';
 import { ConnectedUserEntity } from 'src/connected_user/connected_user.entity';
 export const dataSourceOptions: DataSourceOptions = {
   type: 'mysql',
@@ -24,7 +23,6 @@ export const dataSourceOptions: DataSourceOptions = {
     Follow,
     MessageEntity,
     RoomEntity,
-    JoinedRoomEntity,
     Participant,
     ConnectedUserEntity,
   ],

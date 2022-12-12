@@ -42,15 +42,6 @@ export class ArticlesService {
     return paginate<CreateArticleDto>(queryBuilder, options);
   }
 
-  // async getAll({ limit, skip }: PaginationDTO) {
-  //   const articles = this.articlesRepository.find({
-  //     relations: ['comments'],
-  //     skip: skip,
-  //     take: limit,
-  //   });
-  //   return articles;
-  // }
-
   async getAll(pagiantion: PageOptionsDto): Promise<PageDto<CreateArticleDto>> {
     const query = this.articlesRepository.createQueryBuilder('article');
     query

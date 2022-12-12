@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Socket } from 'socket.io';
 import { RoomUserService } from 'src/room_user/room_user.service';
-import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { RoomDataDTO } from './dto/roomData.dto';
 import { RoomEntity } from './entity/room.entity';
@@ -14,11 +14,11 @@ export class RoomsService {
     private roomUserService: RoomUserService,
   ) {}
 
-  async createRoom(roomData: RoomDataDTO, creator: User) {
+  async createRoom(roomData: RoomDataDTO, socket: Socket) {
     const createRoom = await this.roomRepository.save({
       ...roomData,
     });
-    const participant = await this.roomUserService.create(createRoom, creator);
+    const participant = await this.roomUserService.create(createRoom, socket);
     return participant;
   }
 

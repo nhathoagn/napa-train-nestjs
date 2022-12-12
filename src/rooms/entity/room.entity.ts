@@ -1,5 +1,5 @@
 import { MessageEntity } from 'src/message/entity/message.entity';
-import { Participant } from 'src/room_user/room_user.entity';
+import { Participant } from 'src/room_user/entity/room_user.entity';
 import {
   BaseEntity,
   Column,
@@ -9,8 +9,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { JoinedRoomEntity } from '../../join-room/entity/joinRoom.entity';
-
 @Entity()
 export class RoomEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -30,9 +28,6 @@ export class RoomEntity extends BaseEntity {
 
   @OneToMany(() => MessageEntity, (mess) => mess.room)
   message: MessageEntity[];
-
-  @OneToMany(() => JoinedRoomEntity, (joinedRooms) => joinedRooms.room)
-  joinedUser: JoinedRoomEntity[];
 
   @OneToMany(() => Participant, (participant) => participant.room)
   participant: Participant[];

@@ -14,7 +14,6 @@ import { GatewayModule } from './gateway/gateway.module';
 import { ConnectedUserModule } from './connected_user/connected_user.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { RoomUserModule } from './room_user/room_user.module';
-import { JoinRoomModule } from './join-room/join-room.module';
 import { MessageModule } from './message/message.module';
 
 @Module({
@@ -33,7 +32,6 @@ import { MessageModule } from './message/message.module';
     ConnectedUserModule,
     RoomsModule,
     RoomUserModule,
-    JoinRoomModule,
     MessageModule,
   ],
   controllers: [AppController],
