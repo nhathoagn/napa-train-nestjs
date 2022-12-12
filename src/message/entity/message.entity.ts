@@ -20,6 +20,9 @@ export class MessageEntity extends BaseEntity {
   @Column({ default: false })
   media: string;
 
+  @Column('boolean', { default: true })
+  isShow: boolean;
+
   @ManyToOne(() => User, (user) => user.message)
   user: User;
 

@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { ConnectedUserEntity } from 'src/connected_user/connected_user.entity';
 import { ConnectedUserService } from 'src/connected_user/connected_user.service';
 import { CreatedMessageDTO } from 'src/message/dto/createMessage.dto';
+import { RemoveMessage } from 'src/message/dto/removeMessage.dto';
 import { MessageService } from 'src/message/message.service';
 import { RoomDTO } from 'src/rooms/dto/room.dto';
 import { RoomDataDTO } from 'src/rooms/dto/roomData.dto';
@@ -123,6 +124,23 @@ export class GateWay implements OnGatewayConnection, OnGatewayDisconnect {
       await this.roomUserService.addUser(room, user);
     } else {
       return { msg: 'You are not permitted to perform this action' };
+    }
+  }
+
+  @SubscribeMessage('RemoveMessage')
+  async handleRemoveMessage(socket: Socket, messageData: RemoveMessage) {
+    const userJoined = await this.roomUserService.findUserRoom(
+      messageData.roomId,
+      socket.data.user.id,
+    );
+    if (userJoined.length > 0) {
+      const sender = await this.messageService.findMess({
+        ...messageData,
+        userId: socket.data.user.id,
+      });
+      if (sender) {
+        await this.messageService.removeMessage(sender[0]);
+      }
     }
   }
 }
